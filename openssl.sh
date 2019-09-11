@@ -82,54 +82,52 @@ _cpu="$2"
 
   # Make steps for determinism
 
-  engdir="${_pkg}/lib/engines*"
-
-  "${_CCPREFIX}strip" -p --enable-deterministic-archives -g ${_pkg}/lib/*.a
-  "${_CCPREFIX}strip" -p -s ${_pkg}/bin/openssl.exe
-  "${_CCPREFIX}strip" -p -s ${_pkg}/bin/*.dll
+  "${_CCPREFIX}strip" -p --enable-deterministic-archives -g "${_pkg}"/lib/*.a
+  "${_CCPREFIX}strip" -p -s "${_pkg}"/bin/openssl.exe
+  "${_CCPREFIX}strip" -p -s "${_pkg}"/bin/*.dll
   # shellcheck disable=SC2086
-  if ls ${engdir}/*.dll > /dev/null 2>&1; then
+  if ls "${_pkg}"/lib/engines*/*.dll > /dev/null 2>&1; then
     # shellcheck disable=SC2086
-    "${_CCPREFIX}strip" -p -s ${engdir}/*.dll
+    "${_CCPREFIX}strip" -p -s "${_pkg}"/lib/engines*/*.dll
   fi
 
-  ../_peclean.py "${_ref}" ${_pkg}/bin/openssl.exe
-  ../_peclean.py "${_ref}" ${_pkg}/bin/*.dll
+  ../_peclean.py "${_ref}" "${_pkg}"/bin/openssl.exe
+  ../_peclean.py "${_ref}" "${_pkg}"/bin/*.dll
 
-  ../_sign.sh "${_ref}" ${_pkg}/bin/openssl.exe
-  ../_sign.sh "${_ref}" ${_pkg}/bin/*.dll
+  ../_sign.sh "${_ref}" "${_pkg}"/bin/openssl.exe
+  ../_sign.sh "${_ref}" "${_pkg}"/bin/*.dll
 
   # shellcheck disable=SC2086
-  if ls ${engdir}/*.dll > /dev/null 2>&1; then
+  if ls "${_pkg}"/lib/engines*/*.dll > /dev/null 2>&1; then
     # shellcheck disable=SC2086
-    ../_peclean.py "${_ref}" ${engdir}/*.dll
+    ../_peclean.py "${_ref}" "${_pkg}"/lib/engines*/*.dll
 
     # shellcheck disable=SC2086
-    ../_sign.sh "${_ref}" ${engdir}/*.dll
+    ../_sign.sh "${_ref}" "${_pkg}"/lib/engines*/*.dll
   fi
 
-  touch -c -r "${_ref}" ${_pks}/ct_log_list.cnf
-  touch -c -r "${_ref}" ${_pks}/ct_log_list.cnf.dist
-  touch -c -r "${_ref}" ${_pks}/openssl.cnf
-  touch -c -r "${_ref}" ${_pks}/openssl.cnf.dist
-  touch -c -r "${_ref}" ${_pkg}/bin/openssl.exe
-  touch -c -r "${_ref}" ${_pkg}/bin/*.dll
-  touch -c -r "${_ref}" ${_pkg}/include/openssl/*.h
-  touch -c -r "${_ref}" ${_pkg}/lib/*.a
-  touch -c -r "${_ref}" ${_pkg}/lib/pkgconfig/*.pc
+  touch -c -r "${_ref}" "${_pks}"/ct_log_list.cnf
+  touch -c -r "${_ref}" "${_pks}"/ct_log_list.cnf.dist
+  touch -c -r "${_ref}" "${_pks}"/openssl.cnf
+  touch -c -r "${_ref}" "${_pks}"/openssl.cnf.dist
+  touch -c -r "${_ref}" "${_pkg}"/bin/openssl.exe
+  touch -c -r "${_ref}" "${_pkg}"/bin/*.dll
+  touch -c -r "${_ref}" "${_pkg}"/include/openssl/*.h
+  touch -c -r "${_ref}" "${_pkg}"/lib/*.a
+  touch -c -r "${_ref}" "${_pkg}"/lib/pkgconfig/*.pc
   # shellcheck disable=SC2086
-  if ls ${engdir}/*.dll > /dev/null 2>&1; then
+  if ls "${_pkg}"/lib/engines*/*.dll > /dev/null 2>&1; then
     # shellcheck disable=SC2086
-    touch -c -r "${_ref}" ${engdir}/*
+    touch -c -r "${_ref}" "${_pkg}"/lib/engines*/*
   fi
 
   # Tests
 
-  "${_CCPREFIX}objdump" -x ${_pkg}/bin/openssl.exe | grep -E -i "(file format|dll name)"
-  "${_CCPREFIX}objdump" -x ${_pkg}/bin/*.dll       | grep -E -i "(file format|dll name)"
+  "${_CCPREFIX}objdump" -x "${_pkg}"/bin/openssl.exe | grep -E -i "(file format|dll name)"
+  "${_CCPREFIX}objdump" -x "${_pkg}"/bin/*.dll       | grep -E -i "(file format|dll name)"
 
-  ${_WINE} ${_pkg}/bin/openssl.exe version
-  ${_WINE} ${_pkg}/bin/openssl.exe ciphers
+  ${_WINE} "${_pkg}"/bin/openssl.exe version
+  ${_WINE} "${_pkg}"/bin/openssl.exe ciphers
 
   # Create package
 
@@ -140,25 +138,25 @@ _cpu="$2"
   mkdir -p "${_DST}/lib/pkgconfig"
 
   # shellcheck disable=SC2086
-  if ls ${engdir}/*.dll > /dev/null 2>&1; then
+  if ls "${_pkg}"/lib/engines*/*.dll > /dev/null 2>&1; then
     # shellcheck disable=SC2086
-    cp -f -p -r ${engdir} "${_DST}/"
+    cp -f -p -r "${_pkg}"/lib/engines* "${_DST}/"
   fi
 
-  cp -f -p ${_pks}/ct_log_list.cnf      "${_DST}/"
-  cp -f -p ${_pks}/ct_log_list.cnf.dist "${_DST}/"
-  cp -f -p ${_pks}/openssl.cnf          "${_DST}/"
-  cp -f -p ${_pks}/openssl.cnf.dist     "${_DST}/"
-  cp -f -p ${_pkg}/bin/openssl.exe      "${_DST}/"
-  cp -f -p ${_pkg}/bin/*.dll            "${_DST}/"
-  cp -f -p ${_pkg}/include/openssl/*.h  "${_DST}/include/openssl/"
-  cp -f -p ${_pkg}/lib/*.a              "${_DST}/lib/"
-  cp -f -p ${_pkg}/lib/pkgconfig/*.pc   "${_DST}/lib/pkgconfig/"
-  cp -f -p CHANGES                      "${_DST}/CHANGES.txt"
-  cp -f -p LICENSE                      "${_DST}/LICENSE.txt"
-  cp -f -p README                       "${_DST}/README.txt"
-  cp -f -p FAQ                          "${_DST}/FAQ.txt"
-  cp -f -p NEWS                         "${_DST}/NEWS.txt"
+  cp -f -p "${_pks}"/ct_log_list.cnf      "${_DST}/"
+  cp -f -p "${_pks}"/ct_log_list.cnf.dist "${_DST}/"
+  cp -f -p "${_pks}"/openssl.cnf          "${_DST}/"
+  cp -f -p "${_pks}"/openssl.cnf.dist     "${_DST}/"
+  cp -f -p "${_pkg}"/bin/openssl.exe      "${_DST}/"
+  cp -f -p "${_pkg}"/bin/*.dll            "${_DST}/"
+  cp -f -p "${_pkg}"/include/openssl/*.h  "${_DST}/include/openssl/"
+  cp -f -p "${_pkg}"/lib/*.a              "${_DST}/lib/"
+  cp -f -p "${_pkg}"/lib/pkgconfig/*.pc   "${_DST}/lib/pkgconfig/"
+  cp -f -p CHANGES                        "${_DST}/CHANGES.txt"
+  cp -f -p LICENSE                        "${_DST}/LICENSE.txt"
+  cp -f -p README                         "${_DST}/README.txt"
+  cp -f -p FAQ                            "${_DST}/FAQ.txt"
+  cp -f -p NEWS                           "${_DST}/NEWS.txt"
 
   # Luckily, applink is not implemented for 64-bit mingw, omit this file then
   [ "${_cpu}" = '32' ] && cp -f -p ms/applink.c "${_DST}/include/openssl/"
