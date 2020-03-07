@@ -1,6 +1,6 @@
 ---
 # yamllint disable rule:line-length
-version: 0.1{build}
+version: 0.1.{build}
 build_cloud: Docker
 max_jobs: 8
 # https://www.appveyor.com/docs/build-environment/#build-worker-images
