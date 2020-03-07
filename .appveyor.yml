@@ -1,35 +1,22 @@
 ---
 # yamllint disable rule:line-length
-version: 1.0.{build}
-branches:
-  only:
-    - master
-    - dev-appveyor
-    - test-appveyor
+version: 0.1{build}
+build_cloud: Docker
+max_jobs: 8
 # https://www.appveyor.com/docs/build-environment/#build-worker-images
+# https://www.appveyor.com/docs/server/#running-builds
 image:
-  - Ubuntu1804
-# - Visual Studio 2017
+  - Linux
 services:
   - docker
 clone_depth: 8
 build:
   verbosity: detailed
 environment:
-  BINTRAY_APIKEY:
-    secure: ZZ33lWAHzAtktHVhpJaW1haOMRRcw5GMcnK8kJkkklPyK1F/C2F8GLxS3ZEdJf+F
-  GPG_PASSPHRASE:
-    secure:
   VIRUSTOTAL_APIKEY:
     secure: 9SXnYhOkq6CP97zQ+dUc+NzKpKVIoVACMi0wwtLkaUv9y8BimLo5B7XSWBQ9lYwKbQY8JSJ10JFtyxrKRN6O0PK5U7i6bhg4/B6c40ieHHw=
-  CODESIGN_GPG_PASS:
-    secure: N+xoeCLwFHPsb/KBdgOIvJ0NnbVrBI/PLcPkPBTBmedgDVUBlbEZu7HrJcEHNyuR
   CODESIGN_KEY_PASS:
     secure: vvbDZUlaB2WICMOD2zqO3MyPRpy3S06hE3ShA0q+YXWDdj4GX+am+RepjZIlpxtB
-  DEPLOY_GPG_PASS:
-    secure: WHnaUtu4NM46WEgLhxUyPBShvzLNwRoR5v0Z3+/UqM0nMzrUGieb+tJKX/AZLFkx
-  APPVEYOR_RDP_PASSWORD:
-    secure:
   APPVEYOR_YML_DISABLE_PS_LINUX: true
   CC: mingw-clang
 build_script:
@@ -40,16 +27,6 @@ build_script:
         --env-file <(env | grep -E '^(APPVEYOR_|BINTRAY_|GPG_|VIRUSTOTAL_|CODESIGN_|DEPLOY_|CC|GITLAB_|CI_)') \
         "${DOCKER_IMAGE}" \
         sh -c ./_ci-linux-debian.sh
-  - cmd: |
-      set PATH=C:\msys64\usr\bin;%SystemRoot%\system32
-      sh -c ./_ci-win-msys2.sh
 artifacts:
   - path: '*-*-mingw*.*'
     name: master
-  - path: 'all-mingw*.*'
-    name: all
-# init:
-#   - sh: curl -sfL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
-#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-# on_finish:
-#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
